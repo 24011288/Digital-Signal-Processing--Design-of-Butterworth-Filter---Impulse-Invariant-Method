@@ -17,7 +17,58 @@ Step 5: Plot the magnitude spectrum with x-label and y-label with suitable title
 Step 6: Terminate the program.
 
 ## PROGRAM:
+```
+clc;
+clear all;
+close all;
+
+Ap = input('enter the value of Ap = ');
+As = input('enter the value of As = ');
+wp = input('enter the PB frequency = ');
+ws = input('enter the SB frequency = ');
+T  = input('enter the value of time = ');
+
+omega_p = wp / T;
+omega_s = ws / T;
+
+alpha_p = 20 * log10(Ap);
+alpha_s = 20 * log10(As);
+
+% Order and cutoff frequency
+[N, wc] = buttord(omega_p, omega_s, alpha_p, alpha_s, 's');
+
+% Normalized transfer function
+[num, den] = butter(N, 1, 's');
+disp('Normalized transfer function');
+hs = tf(num, den);
+
+% Unnormalized transfer function
+[num1, den1] = butter(N, wc, 's');
+disp('Unnormalized transfer function');
+hs1 = tf(num1, den1);
+
+% Digital conversion using impulse invariance
+[numz, denz] = impinvar(num1, den1, 1/T);
+hz = tf(numz, denz, T);
+disp('Digital transfer function');
+
+% Frequency response
+w = 0 : pi/16 : pi;
+y = freqz(numz, denz, w);
+
+% Magnitude spectrum
+y1 = abs(y);
+plot(w, y1);
+xlabel('Frequency');
+ylabel('Magnitude');
+title('Magnitude Response of Butterworth LPF');
+grid on;
+```
 
 ## OUTPUT:
+<img width="1919" height="1047" alt="image" src="https://github.com/user-attachments/assets/868fe323-54d6-452a-82bf-96cf71c234b0" />
+
 
 ## RESULT:
+<img width="1600" height="616" alt="image" src="https://github.com/user-attachments/assets/b266fb35-c6a1-4668-8357-82485162b96c" />
+
